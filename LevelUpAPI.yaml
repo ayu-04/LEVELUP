@@ -1,0 +1,697 @@
+openapi: 3.0.0
+info:
+  title: Level UP API
+  description: >
+    <div>You can test different Level Up API endpoints here.
+    </div>
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:5000/
+tags:
+  - name: Login
+    description: Login Page
+  - name: SignUp
+    description: Sign up Page
+  - name: Logout
+  - name: Dashboard
+    description: get mentor/ mentee dashboard
+  - name: MentorDetails
+    description: get, edit details of a mentor
+  - name: MenteeDetails
+    description: get, edit details of a mentee
+  - name: MentorshipRequest
+    description: Mentee can send mentorship request to mentor, mentor can accept or reject
+paths:
+  /api/login:
+    description: Post request for login
+    post:
+      tags:
+        - Login
+      description: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  example: mentee
+                username:
+                  type: string
+                  example: user1
+                password: 
+                  type: string
+                  format: password
+                  example: pass1
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Invalid password
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
+  /api/signup/mentor:
+    description: post request for signup
+    post:
+      tags:
+        - SignUp
+      description: signup as a mentor
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: 'user1'
+                password:
+                  type: string
+                  format: password
+                  example: 'password'
+                profile picture:
+                  type: string
+                  format: binary
+                emailid:
+                  type: string
+                  format: email
+                  example: user@gmail.com
+                age:
+                  type: number
+                  minimum: 15
+                  example: 22
+                location:
+                  type: string
+                  example: lyon
+                phno:
+                  type: number
+                  example: 9999999999
+                languages:
+                  type: array
+                  items: 
+                    type: string
+                  example: [English, French]
+                skills:
+                  type: array
+                  items:
+                    type: string
+                  example: ['programming-python', 'data science']
+                levels completed:
+                  type: array
+                  items: 
+                    type: string
+                  example: ['foundation', 'diploma-programming']
+                current level:
+                  type: string
+                  example: 'diploma-ds'
+                linkedin link:
+                  type: string
+                  example: 'linkedin/user'
+                calendly link:
+                  type: string
+                  example: 'calendly/user'
+                description:
+                  type: string
+                  example: "Hey, I'm a user"
+      responses:
+        '200':
+          description: Successfully Created
+        '401':
+          description: Invalid password
+        '402':
+          description: User already exists
+        '500':
+          description: Internal Server Error
+  /api/signup/mentee:
+    description: post request for signup
+    post:
+      tags:
+        - SignUp
+      description: signup as a mentee
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: 'user1'
+                password:
+                  type: string
+                  format: password
+                  example: 'password'
+                profile picture:
+                  type: string
+                  format: binary
+                emailid:
+                  type: string
+                  format: email
+                  example: user@gmail.com
+                age:
+                  type: number
+                  minimum: 15
+                  example: 22
+                location:
+                  type: string
+                  example: lyon
+                phno:
+                  type: number
+                  example: 9999999999
+                languages:
+                  type: array
+                  items: 
+                    type: string
+                  example: [English, French]
+                skills:
+                  type: array
+                  items:
+                    type: string
+                  example: ['programming-python', 'data science']
+                weaknesses:
+                  type: array
+                  items: 
+                    type: string
+                  example: ['programming-java']
+                description:
+                  type: string
+                  example: "Hey, I'm a mentee"
+      responses:
+        '200':
+          description: Successfully Created
+        '401':
+          description: Invalid password
+        '402':
+          description: User already exists
+        '500':
+          description: Internal Server Error    
+  /api/logout/{username}:
+    get:
+      tags:
+        - Logout
+      description: Logout mentor/ mentee.
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+            example: 'User 1'
+      responses:
+        '200':
+          description: Request Successful
+        '500':
+          description: Internal Server Error
+  /api/dashboard/mentor/{username}:
+    get:
+      tags:
+        - Dashboard
+      description: Get list of mentees
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+            example: user1
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  mentee list:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        skills:
+                          type: array
+                          items:
+                            type: string
+                        weaknesses:
+                          type: array
+                          items: 
+                            type: string
+                        phno:
+                          type: number
+                        profile picture:
+                          type: string
+                          format: binary
+                    example: [{username: user1, 'profile picture': '0101', skills:['programming-python', 'data science'], weaknesses: ['programming-java'], phno: 999999999}, {username: user2, 'profile picture': '0101', skills:['programming-python', 'data science'], weaknesses: ['programming-java'], phno: 9999999999}]
+        '201': 
+          description: No mentees
+        '500':
+          description: Internal Server Error
+  /api/dashboard/mentee/{username}/{skills}/{language}/{level}:
+    get:
+      tags:
+        - Dashboard
+      description: Get list of mentors
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+            example: user1
+        - in: path
+          name: skills
+          schema: 
+            type: string
+            example: machine learning
+        - in: path
+          name: language
+          schema: 
+            type: string
+            example: English
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  mentee list:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        languages:
+                          type: array
+                          items: 
+                            type: string
+                        skills:
+                          type: array
+                          items:
+                            type: string
+                        current level:
+                          type: string
+                        profile picture:
+                          type: string
+                          format: binary
+                    example: [{username: user1, profile picture: '0101', languages: [English, French], skills: ['programming-python', 'data science'], current level: 'diploma-ds' }, {username: user2, 'profile picture': '0101', languages: [English], skills: ['machine learning'], current level: 'bsc-degree' }]
+        '500':
+          description: Internal Server Error
+  /api/mentor/{username}/{mentorname}:
+    get:
+      tags:
+        - MentorDetails
+      description: Gets details of a mentor
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema: 
+            type: string
+            example: user1
+        - in: path
+          name: mentorname
+          required: true
+          schema: 
+            type: string
+            example: mentor1
+      responses: 
+        '200': 
+          description: Request Successful
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: 'user1'
+                  profile picture:
+                    type: string
+                    format: binary
+                  emailid:
+                    type: string
+                    format: email
+                    example: user@gmail.com
+                  age:
+                    type: number
+                    minimum: 15
+                    example: 22
+                  location:
+                    type: string
+                    example: lyon
+                  phno:
+                    type: number
+                    example: 9999999999
+                  languages:
+                    type: array
+                    items: 
+                      type: string
+                    example: [English, French]
+                  skills:
+                    type: array
+                    items:
+                      type: string
+                    example: ['programming-python', 'data science']
+                  levels completed:
+                    type: array
+                    items: 
+                      type: string
+                    example: ['foundation', 'diploma-programming']
+                  current level:
+                    type: string
+                    example: 'diploma-ds'
+                  linkedin link:
+                    type: string
+                    example: 'linkedin/user'
+                  calendly link:
+                    type: string
+                    example: 'calendly/user'
+                  description:
+                    type: string
+                    example: "Hey, I'm a user"
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - MentorDetails
+      description: Edits details of a mentor
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema: 
+            type: string
+            example: mentor1
+        - in: path
+          name: mentorname
+          required: true
+          schema: 
+            type: string
+            example: mentor1
+      requestBody:
+        content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  profile picture:
+                    type: string
+                    format: binary
+                  emailid:
+                    type: string
+                    format: email
+                    example: user@gmail.com
+                  age:
+                    type: number
+                    minimum: 15
+                    example: 22
+                  location:
+                    type: string
+                    example: lyon
+                  phno:
+                    type: number
+                    example: 9999999999
+                  languages:
+                    type: array
+                    items: 
+                      type: string
+                    example: [English, French]
+                  skills:
+                    type: array
+                    items:
+                      type: string
+                    example: ['programming-python', 'data science']
+                  levels completed:
+                    type: array
+                    items: 
+                      type: string
+                    example: ['foundation', 'diploma-programming']
+                  current level:
+                    type: string
+                    example: 'diploma-ds'
+                  linkedin link:
+                    type: string
+                    example: 'linkedin/user'
+                  calendly link:
+                    type: string
+                    example: 'calendly/user'
+                  description:
+                    type: string
+                    example: "Hey, I'm a user"
+      responses: 
+        '200': 
+          description: Request Successful
+        '500':
+          description: Internal Sever Error
+  /api/mentee/{username}/{menteename}:
+    get:
+      tags:
+        - MenteeDetails
+      description: Gets details of a mentee
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema: 
+            type: string
+            example: user1
+        - in: path
+          name: menteename
+          required: true
+          schema: 
+            type: string
+            example: mentee1
+      responses: 
+        '200': 
+          description: Request Successful
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: 'user1'
+                  profile picture:
+                    type: string
+                    format: binary
+                  emailid:
+                    type: string
+                    format: email
+                    example: user@gmail.com
+                  age:
+                    type: number
+                    minimum: 15
+                    example: 22
+                  location:
+                    type: string
+                    example: lyon
+                  phno:
+                    type: number
+                    example: 9999999999
+                  languages:
+                    type: array
+                    items: 
+                      type: string
+                    example: [English, French]
+                  skills:
+                    type: array
+                    items:
+                      type: string
+                    example: ['programming-python', 'data science']
+                  weaknesses:
+                    type: array
+                    items: 
+                      type: string
+                    example: ['programming-java']
+                  description:
+                    type: string
+                    example: "Hey, I'm a mentee"
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - MenteeDetails
+      description: Edits details of a mentee
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema: 
+            type: string
+            example: mentee1
+        - in: path
+          name: menteename
+          required: true
+          schema: 
+            type: string
+            example: mentee1
+      requestBody:
+        content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  profile picture:
+                    type: string
+                    format: binary
+                  age:
+                    type: number
+                    minimum: 15
+                    example: 22
+                  location:
+                    type: string
+                    example: lyon
+                  phno:
+                    type: number
+                    example: 9999999999
+                  languages:
+                    type: array
+                    items: 
+                      type: string
+                    example: [English, French]
+                  skills:
+                    type: array
+                    items:
+                      type: string
+                    example: ['programming-python', 'data science']
+                  weaknesses:
+                    type: array
+                    items: 
+                      type: string
+                    example: ['programming-java']
+                  description:
+                    type: string
+                    example: "Hey, I'm a mentee"
+      responses: 
+        '200': 
+          description: Request Successful
+        '500':
+          description: Internal Sever Error
+  /api/mentorshiprequest/mentee/{username}:
+    get:
+      tags:
+        - MentorshipRequest
+      description: get a list of pending and accepted mentorship requests
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema: 
+            type: string
+            example: mentee1
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mentorlist:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        status:
+                          type: string
+                    example: [{username: mentor1, status: pending}, {username: mentor2, status: accepted}]
+        '500':
+          description: Internal Sever Error
+    post:
+      tags:
+        - MentorshipRequest
+      description: send a mentorship request
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema: 
+            type: string
+            example: mentee1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mentorname:
+                  type: string
+                  example: mentor1
+      responses:
+        '200':
+          description: Request Successful
+        '500':
+          description: Internal Sever Error
+  /api/mentorshiprequest/mentor/{username}:
+    get:
+      tags:
+        - MentorshipRequest
+      description: get a list of pending and accepted mentorship requests
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema: 
+            type: string
+            example: mentor1
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  menteelist:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                        status:
+                          type: string
+                    example: [{username: mentee1, status: pending}, {username: mentee2, status: accepted}]
+        '500':
+          description: Internal Sever Error
+    post:
+      tags:
+        - MentorshipRequest
+      description: accept or reject a mentorship request
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema: 
+            type: string
+            example: mentor1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mentorname:
+                  type: string
+                  example: mentee1
+                decision: 
+                  type: string
+                  example: accept
+      responses:
+        '200':
+          description: Request Successful
+        '500':
+          description: Internal Sever Error
